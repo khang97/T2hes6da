@@ -5,11 +5,11 @@ import game.Game;
 public class EnemyEntity extends Entity {
 	
 	private Game game; // exists in phase game
-	private double moveSpeed = 90; // alien speed
+	private double enemySpeed = 145; // alien speed
 	
 	public EnemyEntity(Game game,String ref,int x,int y) {
 		super(ref,x,y); // alien location
-		mx = -moveSpeed;
+		mx = -enemySpeed;
 		this.game = game;
 
 	}
@@ -29,7 +29,7 @@ public class EnemyEntity extends Entity {
 		y += 15;
 		
 		if (y > 580) { // when reach end of screen end game
-			game.notifyDeath();
+			game.notifyLose();
 		}
 	}
 	

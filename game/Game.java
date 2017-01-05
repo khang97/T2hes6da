@@ -16,7 +16,7 @@ import javax.swing.JPanel;
 
 import entities.EnemyEntity;
 import entities.Entity;
-import entities.ShipEntity;
+import entities.PlayerEntity;
 import entities.ShotEntity;
 
 
@@ -29,11 +29,11 @@ public class Game extends Canvas {
 	private ArrayList removeList = new ArrayList(); // list to remove this loop
 	@SuppressWarnings("rawtypes")
 	private ArrayList entities = new ArrayList(); // all existing units
-	private Entity ship; // player
+	private Entity player; // player
 	private double moveSpeed = 450; //player speed
-	private long firingInterval = 500; // time between shots
+	private long fireSpeed = 500; // time between shots
 	private long lastFire = 0; // last fire time
-	private int alienCount; // counts aliens left
+	private int enemiesAlive; // counts aliens left
 	
 	private String message = ""; // current message on screen
 	private boolean waitingForKeyPress = true; // start game on key press
@@ -54,6 +54,7 @@ public class Game extends Canvas {
 		container.setVisible(true);
 		setBounds(0,0,800,600); // set canvas bound
 		panel.add(this);
+		container.getContentPane().setBackground(Color.BLACK);
 		
 		container.addWindowListener(new WindowAdapter() { 
 			public void windowClosing(WindowEvent e) {
@@ -67,32 +68,32 @@ public class Game extends Canvas {
 		createBufferStrategy(2); // buffer strategy for faster render
 		strategy = getBufferStrategy();
 
-		initEntities(); // spawn on startup
+		spawn(); // spawn on startup
 	}
 	
 
 	private void startGame() {
 		entities.clear(); // fresh board on starting game
-		initEntities();
+		spawn();
 
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void initEntities() {
+	private void spawn() {
 		
-		ship = new ShipEntity(this,"sprite/ship.png",370,550); // create player
-		entities.add(ship);
+		player = new PlayerEntity(this,"sprite/ship.png",370,542); // create player
+		entities.add(player);
 		
-		alienCount = 0; // create aliens
-		for (int row=0;row<5;row++) {
-			for (int x=0;x<12;x++) {
-				Entity alien = new EnemyEntity(this,"sprite/alien.png",100+(x*50),(50)+row*30);
+		enemiesAlive = 0; // create aliens
+		for (int row=0;row<6;row++) {
+			for (int x=0;x<10;x++) {
+				Entity alien = new EnemyEntity(this,"sprite/alien.png",150+(x*50),(35)+row*35);
 				entities.add(alien);
-				alienCount++;
+				enemiesAlive++;
 			}
-		}
+		}	
 	}
-	
+
 	public void updateAction() { // update action loop
 		actionRequiredThisLoop = true;
 	}
@@ -107,36 +108,28 @@ public class Game extends Canvas {
 		waitingForKeyPress = true;
 	}
 	
-	public void notifyDeath() { // when dead send message and wait for input
-		message = "You lose!";
+	public void notifyLose() { // when dead send message and wait for input
+		message = "You lost!";
 		waitingForKeyPress = true;
 	}
 
 	public void notifyAlienKilled() { // count aliens killed, when 0 left
-		alienCount--;				  // trigger player win
+		enemiesAlive--;				  // trigger player win
 		
-		if (alienCount == 0) {
+		if (enemiesAlive == 0) {
 			notifyWin();
-		}
-		
-		for (int i=0;i<entities.size();i++) { // increase speed when less aliens
-			Entity entity = (Entity) entities.get(i);
-			
-			if (entity instanceof EnemyEntity) { // change speed by 2% per alien
-				entity.setHorizontalMovement(entity.getHorizontalMovement() * 1.02);
-			}
 		}
 	}
 	
 
 	@SuppressWarnings("unchecked")
-	public void tryToFire() { // only fire if enough time passed since last fire
-		if (System.currentTimeMillis() - lastFire < firingInterval) {
+	public void tryFire() { // only fire if enough time passed since last fire
+		if (System.currentTimeMillis() - lastFire < fireSpeed) {
 			return;
 		}
 		
 		lastFire = System.currentTimeMillis();
-		ShotEntity shot = new ShotEntity(this,"sprite/shoot.png",ship.getX()+10,ship.getY()-30);
+		ShotEntity shot = new ShotEntity(this,"sprite/shoot.png",player.getX()+10,player.getY()-30);
 		entities.add(shot); // creates bullet
 	}
 	
@@ -198,15 +191,15 @@ public class Game extends Canvas {
 			g.dispose(); // drawing finished
 			strategy.show();
 			
-			ship.setHorizontalMovement(0); // move ship when key pressed, stop when both
+			player.setHorizontalMovement(0); // move ship when key pressed, stop when both
 			if ((leftPressed) && (!rightPressed)) {
-				ship.setHorizontalMovement(-moveSpeed);
+				player.setHorizontalMovement(-moveSpeed);
 			} else if ((rightPressed) && (!leftPressed)) {
-				ship.setHorizontalMovement(moveSpeed);
+				player.setHorizontalMovement(moveSpeed);
 			}
 			
 			if (firePressed) { // check time from last fire
-				tryToFire();
+				tryFire();
 			}
 		}
 	}
