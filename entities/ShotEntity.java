@@ -1,14 +1,14 @@
 package entities;
 
-import game.Game;
+import game.Main;
 
 public class ShotEntity extends Entity {
 	private double shotSpeed = -350; // bullet speed
-	private Game game; // exists in phase
+	private Main game; // exists in phase
 	private boolean used = false; // used hits something
 	
 
-	public ShotEntity(Game game,String sprite,int x,int y) { // shot created, location
+	public ShotEntity(Main game,String sprite,int x,int y) { // shot created, location
 		super(sprite,x,y);
 		
 		this.game = game;
@@ -20,7 +20,7 @@ public class ShotEntity extends Entity {
 	public void move(long delta) { // move depending on time
 		super.move(delta);
 		
-		if (y < -100) { // delete when offscreen
+		if (y < -50) { // delete when offscreen
 			game.removeEntity(this);
 		}
 	}

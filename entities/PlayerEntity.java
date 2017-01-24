@@ -1,12 +1,12 @@
 package entities;
 
-import game.Game;
+import game.Main;
 
 
 public class PlayerEntity extends Entity {
-	private Game game; // ship in phase
+	private Main game; // ship in phase
 	
-	public PlayerEntity(Game game,String ref,int x,int y) { // create unit for ship
+	public PlayerEntity(Main game,String ref,int x,int y) { // create unit for ship
 		super(ref,x,y);
 		
 		this.game = game;
@@ -14,7 +14,7 @@ public class PlayerEntity extends Entity {
 	
 
 	public void move(long delta) { // move based on time
-		if ((mx < 0) && (x < 10)) { // dont move when end of screen
+		if ((mx < 0) && (x < 20)) { // dont move when end of screen
 			return;
 		}
 	

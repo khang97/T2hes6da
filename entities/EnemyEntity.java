@@ -1,27 +1,27 @@
 package entities;
 
-import game.Game;
+import game.Main;
 
 public class EnemyEntity extends Entity {
 	
-	private Game game; // exists in phase game
+	private Main game; // exists in phase game
 	private double enemySpeed = 145; // alien speed
 	
-	public EnemyEntity(Game game,String ref,int x,int y) {
+	public EnemyEntity(Main game,String ref,int x,int y) {
 		super(ref,x,y); // alien location
 		mx = -enemySpeed;
 		this.game = game;
 
 	}
 
-	public void move(long regular) { 
-		if ((mx < 0) & (x < 10)) { // if reach left side change direction
+	public void move(long delta) { 
+		if ((mx < 0) && (x < 15)) { // if reach left side change direction
 			game.updateAction();
 		}
-		if ((mx > 0) & (x > 750)) { // if reach right side change direction
+		if ((mx > 0) && (x > 745)) { // if reach right side change direction
 			game.updateAction();
 		}
-		super.move(regular); // move normal
+		super.move(delta); // move normal
 	}
 	
 	public void doAction() { // when reach either side move down and change
